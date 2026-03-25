@@ -68,7 +68,7 @@ function WallCard({ item, onClick }) {
       onMouseLeave={() => setHov(false)}
       style={{
         position:"relative", overflow:"hidden", cursor:"pointer",
-        height: item.h, marginBottom:12,
+        minHeight: item.h, marginBottom:12,
         background: item.bg || "#141110",
         transform: hov ? "scale(1.012)" : "scale(1)",
         transition: "transform 0.35s cubic-bezier(.16,1,.3,1)",
@@ -76,7 +76,7 @@ function WallCard({ item, onClick }) {
     >
       {item.image_url && (
         <img src={item.image_url} alt={item.artist}
-          style={{ width:"100%", height:"100%", objectFit:"cover", display:"block",
+          style={{ width:"100%", height:"100%", objectFit:"contain", display:"block",
             transform: hov ? "scale(1.05)" : "scale(1)",
             transition: "transform 0.55s cubic-bezier(.16,1,.3,1)" }}
         />
@@ -324,6 +324,55 @@ export default function App() {
         </div>
       </Rv>
 
+      {/* COMMUNITY ATTRIBUTIONS - TRAILER */}
+      <Break />
+      <section id="wall">
+        <Rv>
+          <div style={{ padding:"0 48px 40px", display:"flex",
+            justifyContent:"space-between", alignItems:"flex-end", flexWrap:"wrap", gap:16 }}>
+            <div>
+              <div style={{ fontFamily:"'Chakra Petch',sans-serif", fontWeight:600, fontSize:12,
+                color:S.ochre, textTransform:"uppercase", letterSpacing:3, marginBottom:8 }}>
+                Community attributions
+              </div>
+              <p style={{ fontSize:11, color:S.dim, letterSpacing:1, maxWidth:400, lineHeight:1.8 }}>
+                Every identification made by MANTL users, growing in real time.
+                A living database of art and its creators.
+              </p>
+            </div>
+          </div>
+        </Rv>
+
+        {/* Wall is clickable - whole section goes to gallery */}
+        <div style={{ position:"relative", cursor:"pointer" }} onClick={goToGallery}>
+          <MasonryWall items={wall.slice(0, 12)} onCardClick={goToGallery} />
+          {/* Fade curtain at bottom */}
+          <div style={{
+            position:"absolute", bottom:0, left:0, right:0, height:280,
+            background:`linear-gradient(to top, ${S.base} 0%, transparent 100%)`,
+            pointerEvents:"none",
+          }} />
+          {/* Click to explore CTA over fade */}
+          <div style={{
+            position:"absolute", bottom:40, left:0, right:0,
+            display:"flex", justifyContent:"center", pointerEvents:"none",
+          }}>
+            <div style={{
+              fontFamily:"'Chakra Petch',sans-serif", fontSize:11, fontWeight:700,
+              letterSpacing:4, textTransform:"uppercase", color:S.text,
+              border:`1px solid ${S.border}`, padding:"14px 40px",
+              background:S.base, pointerEvents:"all", cursor:"pointer",
+              transition:"all .25s",
+            }}
+              onClick={goToGallery}
+              onMouseEnter={e => { e.currentTarget.style.borderColor=S.red; e.currentTarget.style.color=S.red; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor=S.border; e.currentTarget.style.color=S.text; }}>
+              Explore the full database
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FOR ARTISTS */}
       <Break />
       <section id="artists" style={{ padding:"clamp(48px,8vh,80px) 48px",
@@ -374,55 +423,6 @@ export default function App() {
             </div>
           </div>
         </Rv>
-      </section>
-
-      {/* COMMUNITY ATTRIBUTIONS - TRAILER */}
-      <Break />
-      <section id="wall">
-        <Rv>
-          <div style={{ padding:"0 48px 40px", display:"flex",
-            justifyContent:"space-between", alignItems:"flex-end", flexWrap:"wrap", gap:16 }}>
-            <div>
-              <div style={{ fontFamily:"'Chakra Petch',sans-serif", fontWeight:600, fontSize:12,
-                color:S.ochre, textTransform:"uppercase", letterSpacing:3, marginBottom:8 }}>
-                Community attributions
-              </div>
-              <p style={{ fontSize:11, color:S.dim, letterSpacing:1, maxWidth:400, lineHeight:1.8 }}>
-                Every identification made by MANTL users, growing in real time.
-                A living database of art and its creators.
-              </p>
-            </div>
-          </div>
-        </Rv>
-
-        {/* Wall is clickable - whole section goes to gallery */}
-        <div style={{ position:"relative", cursor:"pointer" }} onClick={goToGallery}>
-          <MasonryWall items={wall.slice(0, 12)} onCardClick={goToGallery} />
-          {/* Fade curtain at bottom */}
-          <div style={{
-            position:"absolute", bottom:0, left:0, right:0, height:280,
-            background:`linear-gradient(to top, ${S.base} 0%, transparent 100%)`,
-            pointerEvents:"none",
-          }} />
-          {/* Click to explore CTA over fade */}
-          <div style={{
-            position:"absolute", bottom:40, left:0, right:0,
-            display:"flex", justifyContent:"center", pointerEvents:"none",
-          }}>
-            <div style={{
-              fontFamily:"'Chakra Petch',sans-serif", fontSize:11, fontWeight:700,
-              letterSpacing:4, textTransform:"uppercase", color:S.text,
-              border:`1px solid ${S.border}`, padding:"14px 40px",
-              background:S.base, pointerEvents:"all", cursor:"pointer",
-              transition:"all .25s",
-            }}
-              onClick={goToGallery}
-              onMouseEnter={e => { e.currentTarget.style.borderColor=S.red; e.currentTarget.style.color=S.red; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor=S.border; e.currentTarget.style.color=S.text; }}>
-              Explore the full database
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* INSTALL CTA */}
