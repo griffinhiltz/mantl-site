@@ -68,15 +68,15 @@ function WallCard({ item, onClick }) {
       onMouseLeave={() => setHov(false)}
       style={{
         position:"relative", overflow:"hidden", cursor:"pointer",
-        minHeight: item.h, marginBottom:12,
-        background: item.bg || "#141110",
+        height: item.h, marginBottom:12,
+        background: item.image_url ? "#0a0808" : (item.bg || "#141110"),
         transform: hov ? "scale(1.012)" : "scale(1)",
         transition: "transform 0.35s cubic-bezier(.16,1,.3,1)",
       }}
     >
       {item.image_url && (
         <img src={item.image_url} alt={item.artist}
-          style={{ width:"100%", height:"100%", objectFit:"contain", display:"block",
+          style={{ width:"100%", height:item.h, objectFit:"contain", display:"block",
             transform: hov ? "scale(1.05)" : "scale(1)",
             transition: "transform 0.55s cubic-bezier(.16,1,.3,1)" }}
         />
@@ -127,7 +127,7 @@ function MasonryWall({ items, onCardClick }) {
   const cols = [[], []];
 items.forEach((item, i) => cols[i % 2].push({ ...item, _idx: i }));
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:12, padding:"0 48px" }}>
+    <div className="masonry-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:12, padding:"0 48px" }}>
       {cols.map((col, ci) => (
         <div key={ci}>
           {col.map((item, ii) => (
@@ -154,6 +154,8 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Keep API warm
+    const warm = setInterval(() => { fetch(API + "/api/stats").catch(() => {}); }, 9 * 60 * 1000);
     fetch(API + "/api/stats").then(r => r.json()).then(setStats).catch(() => {});
     fetch(API + "/api/works?limit=48")
       .then(r => r.json())
@@ -172,6 +174,7 @@ export default function App() {
         }
       })
       .catch(() => {});
+    return () => clearInterval(warm);
   }, []);
 
   const goToGallery = () => {
@@ -192,6 +195,20 @@ export default function App() {
         @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Anton&display=swap');
         * { margin:0; padding:0; box-sizing:border-box; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+        @media(max-width:768px){
+          .topbar-nav { display:none !important; }
+          .topbar-search-wrap { display:none !important; }
+          .hero { padding: 40px 20px 32px !important; }
+          .stats-bar { gap: 24px !important; padding: 24px 20px !important; }
+          .masonry-grid { grid-template-columns: 1fr !important; padding: 0 16px !important; }
+          .break { padding: 0 20px !important; margin: 32px 0 !important; }
+          .section-inner { padding: 32px 20px !important; flex-direction: column !important; }
+          .footer-inner { padding: 24px 20px !important; }
+        }
+        @media(max-width:480px){
+          .masonry-grid { grid-template-columns: 1fr !important; }
+        }
         @keyframes grain {
           0%,100%{transform:translate(0,0)} 20%{transform:translate(-2%,-2%)}
           40%{transform:translate(2%,-1%)} 60%{transform:translate(-1%,2%)} 80%{transform:translate(1%,1%)}
