@@ -155,19 +155,18 @@ export default function App() {
 
   useEffect(() => {
     fetch(API + "/api/stats").then(r => r.json()).then(setStats).catch(() => {});
-    fetch(API + "/api/attributions?limit=48")
+    fetch(API + "/api/works?limit=48")
       .then(r => r.json())
       .then(data => {
-        const arr = Array.isArray(data) ? data : (data.attributions || data.results || []);
+        const arr = Array.isArray(data) ? data : [];
         if (arr.length > 0) {
           setWall(arr.map((item, i) => ({
-            ...item,
-            artist: item.artist_name || item.artist || "Unknown",
-            source: item.source_url || item.source || "#",
-            image_url: item.image_url || item.thumbnail || null,
+            artist: item.artist || "Unknown",
+            source: item.source_url || "#",
+            image_url: item.image_url || null,
             bg: FALLBACK[i % FALLBACK.length].bg,
             h: HEIGHTS[i % HEIGHTS.length],
-            title: item.title || item.work_title || "",
+            title: item.title || "",
             year: item.year || "",
           })));
         }
@@ -187,7 +186,7 @@ export default function App() {
 
   return (
     <div style={{ background:S.base, color:S.text, fontFamily:"'Courier Prime',monospace",
-      WebkitFontSmoothing:"antialiased", overflowX:"hidden", cursor:"crosshair", minHeight:"100vh" }}>
+      WebkitFontSmoothing:"antialiased", overflowX:"hidden", cursor:"crosshair", minHeight:"100vh", width:"100%", maxWidth:"100%" }}>
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Anton&display=swap');
