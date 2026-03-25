@@ -124,10 +124,10 @@ function WallCard({ item, onClick }) {
 }
 
 function MasonryWall({ items, onCardClick }) {
-  const cols = [[], [], [], []];
-  items.forEach((item, i) => cols[i % 4].push({ ...item, _idx: i }));
+  const cols = [[], []];
+items.forEach((item, i) => cols[i % 2].push({ ...item, _idx: i }));
   return (
-    <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, padding:"0 48px" }}>
+    <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:12, padding:"0 48px" }}>
       {cols.map((col, ci) => (
         <div key={ci}>
           {col.map((item, ii) => (
