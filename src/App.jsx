@@ -68,15 +68,15 @@ function WallCard({ item, onClick }) {
       onMouseLeave={() => setHov(false)}
       style={{
         position:"relative", overflow:"hidden", cursor:"pointer",
-        height: item.h, marginBottom:12,
-        background: item.image_url ? "#0a0808" : (item.bg || "#141110"),
+        minHeight: item.h, marginBottom:12,
+        background: item.bg || "#141110",
         transform: hov ? "scale(1.012)" : "scale(1)",
         transition: "transform 0.35s cubic-bezier(.16,1,.3,1)",
       }}
     >
       {item.image_url && (
         <img src={item.image_url} alt={item.artist}
-          style={{ width:"100%", height:item.h, objectFit:"contain", display:"block",
+          style={{ width:"100%", height:"100%", objectFit:"cover", display:"block",
             transform: hov ? "scale(1.05)" : "scale(1)",
             transition: "transform 0.55s cubic-bezier(.16,1,.3,1)" }}
         />
@@ -127,7 +127,7 @@ function MasonryWall({ items, onCardClick }) {
   const cols = [[], []];
 items.forEach((item, i) => cols[i % 2].push({ ...item, _idx: i }));
   return (
-    <div className="masonry-grid" style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:12, padding:"0 48px" }}>
+    <div className="masonry-grid" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, padding:"0 24px", width:"100%" }}>
       {cols.map((col, ci) => (
         <div key={ci}>
           {col.map((item, ii) => (
@@ -154,8 +154,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Keep API warm
-    const warm = setInterval(() => { fetch(API + "/api/stats").catch(() => {}); }, 9 * 60 * 1000);
     fetch(API + "/api/stats").then(r => r.json()).then(setStats).catch(() => {});
     fetch(API + "/api/works?limit=48")
       .then(r => r.json())
@@ -174,7 +172,6 @@ export default function App() {
         }
       })
       .catch(() => {});
-    return () => clearInterval(warm);
   }, []);
 
   const goToGallery = () => {
@@ -195,20 +192,6 @@ export default function App() {
         @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Anton&display=swap');
         * { margin:0; padding:0; box-sizing:border-box; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
-
-        @media(max-width:768px){
-          .topbar-nav { display:none !important; }
-          .topbar-search-wrap { display:none !important; }
-          .hero { padding: 40px 20px 32px !important; }
-          .stats-bar { gap: 24px !important; padding: 24px 20px !important; }
-          .masonry-grid { grid-template-columns: 1fr !important; padding: 0 16px !important; }
-          .break { padding: 0 20px !important; margin: 32px 0 !important; }
-          .section-inner { padding: 32px 20px !important; flex-direction: column !important; }
-          .footer-inner { padding: 24px 20px !important; }
-        }
-        @media(max-width:480px){
-          .masonry-grid { grid-template-columns: 1fr !important; }
-        }
         @keyframes grain {
           0%,100%{transform:translate(0,0)} 20%{transform:translate(-2%,-2%)}
           40%{transform:translate(2%,-1%)} 60%{transform:translate(-1%,2%)} 80%{transform:translate(1%,1%)}
@@ -217,6 +200,14 @@ export default function App() {
           z-index:9999; opacity:0.04; animation:grain 0.4s steps(1) infinite;
           background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
           background-size:128px; }
+
+        .masonry-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:0 24px; width:100%; }
+        @media(max-width:900px){ .masonry-grid { grid-template-columns:repeat(3,1fr) !important; } }
+        @media(max-width:600px){
+          .masonry-grid { grid-template-columns:repeat(2,1fr) !important; padding:0 8px !important; gap:6px !important; }
+          .topbar-nav { display:none !important; }
+          .topbar-search { max-width:100% !important; margin:0 8px !important; }
+        }
         ::selection { background:rgba(32,96,224,.22); color:#e0dcd6; }
         a { text-decoration:none; }
         input { outline:none; border:none; }
@@ -237,12 +228,12 @@ export default function App() {
 
       {/* TOPBAR */}
       <div style={{ position:"sticky", top:0, zIndex:100, background:S.base,
-        borderBottom:`1px solid ${S.border}`, padding:"10px 48px",
+        borderBottom:`1px solid ${S.border}`, padding:"10px 16px",
         display:"flex", alignItems:"center", justifyContent:"space-between", gap:24 }}>
         <img src={LOGO} alt="MANTL" style={{ height:36, width:"auto", display:"block", flexShrink:0 }} />
 
         {/* Search - center */}
-        <div style={{ flex:1, maxWidth:480, position:"relative", margin:"0 32px" }}>
+        <div style={{ flex:1, maxWidth:560, position:"relative", margin:"0 16px" }}>
           <svg viewBox="0 0 24 24" style={{ position:"absolute", left:12, top:"50%",
             transform:"translateY(-50%)", width:13, height:13, stroke:S.dim, fill:"none", strokeWidth:2 }}>
             <circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/>
@@ -278,8 +269,20 @@ export default function App() {
         </div>
       </div>
 
+      {/* STATS BAR - TOP */}
+      <div style={{ display:"flex", justifyContent:"center", gap:"clamp(24px,5vw,64px)",
+        padding:"12px 24px", borderBottom:`1px solid ${S.border}`, background:S.base }}>
+        {[{ n:stats.works, l:"Works identified" },{ n:stats.artists, l:"Artists found" },{ n:stats.attributions, l:"Attributions" }].map((s,i) => (
+          <div key={i} style={{ textAlign:"center", display:"flex", alignItems:"center", gap:8 }}>
+            <span style={{ fontFamily:"'Chakra Petch',sans-serif", fontSize:"clamp(14px,2vw,20px)",
+              fontWeight:700, color:S.text }}>{s.n.toLocaleString()}</span>
+            <span style={{ fontSize:9, color:S.ochre, letterSpacing:3, textTransform:"uppercase" }}>{s.l}</span>
+          </div>
+        ))}
+      </div>
+
       {/* HERO */}
-      <section style={{ padding:"clamp(64px,12vh,120px) 48px clamp(48px,8vh,80px)",
+      <section style={{ padding:"clamp(32px,6vh,64px) 24px clamp(24px,4vh,48px)",
         display:"flex", flexDirection:"column", alignItems:"center", textAlign:"center" }}>
         <Rv>
           <div style={{ fontFamily:"'Chakra Petch',sans-serif", fontSize:11, color:S.ochre,
@@ -326,20 +329,6 @@ export default function App() {
         <div style={{ width:6, height:6, background:S.red, borderRadius:"50%",
           animation:"pulse 2s ease infinite" }} />
       </section>
-
-      {/* STATS */}
-      <Rv>
-        <div style={{ display:"flex", justifyContent:"center", gap:"clamp(32px,6vw,80px)",
-          padding:"32px 48px", borderTop:`1px solid ${S.border}`, borderBottom:`1px solid ${S.border}` }}>
-          {[{ n:stats.works, l:"Works identified" },{ n:stats.artists, l:"Artists found" },{ n:stats.attributions, l:"Attributions" }].map((s,i) => (
-            <div key={i} style={{ textAlign:"center" }}>
-              <div style={{ fontFamily:"'Chakra Petch',sans-serif", fontSize:"clamp(22px,4vw,34px)",
-                fontWeight:700, color:S.text, lineHeight:1 }}>{s.n.toLocaleString()}</div>
-              <div style={{ fontSize:10, color:S.ochre, letterSpacing:4, textTransform:"uppercase", marginTop:6 }}>{s.l}</div>
-            </div>
-          ))}
-        </div>
-      </Rv>
 
       {/* COMMUNITY ATTRIBUTIONS - TRAILER */}
       <Break />
