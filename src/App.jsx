@@ -180,7 +180,7 @@ export default function App() {
 
       {/* HEADER */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "28px 24px 20px", borderBottom: "1px solid #1e1c1a" }}>
-        <img src={LOGO} alt="MANTL" style={{ height: "clamp(44px, 7vw, 72px)", width: "auto", marginBottom: 18 }} />
+        <img src={LOGO} alt="MANTL" style={{ height: "clamp(60px, 10vw, 80px)", width: "auto", marginBottom: 18 }} />
 
         {/* Search */}
         <div style={{ position: "relative", width: "100%", maxWidth: 480, marginBottom: 18 }}>
